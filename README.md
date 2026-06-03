@@ -178,5 +178,26 @@ Monikaben has Paresis, categorized as a Neurological condition.
 * *"what is Total Amount received by the Monikaben?"*
 * *"How many patients are there"*
 
+## 📊 Power BI Dashboard
+
+The project also includes an interactive Power BI dashboard for operational and financial monitoring.
+
+### Dashboard Features
+
+* Total Revenue Tracking
+* Outstanding Payment Monitoring
+* Patient Condition Analysis
+* Revenue Trends Over Time
+* Village-wise Revenue Distribution
+* Patient Payment History
+* Visit Count Analytics
+
+Dashboard File:
+
+```text
+dashboard/Visit_Charges_Data.pbix
+```
+
+
 ```
 
