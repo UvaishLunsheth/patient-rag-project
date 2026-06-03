@@ -32,7 +32,7 @@ patient-rag-project/
 ├── src/                     # Core application source code
 │   ├── analytics.py         # Analytics and metric tracking
 │   ├── chatbot.py           # Chatbot logic and LLM integration
-│   ├── document_converter.py# File format conversions (e.g., PDF/Word to text)
+│   ├── document_converter.py# Converts patient records into RAG-optimized LangChain documents
 │   ├── loader.py            # Data ingestion scripts
 │   ├── retrieve.py          # Semantic search and RAG retrieval logic
 │   └── vectordb.py          # Vector database (ChromaDB) management
@@ -41,6 +41,28 @@ patient-rag-project/
 ├── requirements.txt         # Python package dependencies
 └── README.md                # Project documentation
 ```
+
+## 🏗️ Architecture
+
+```text
+                    User Question
+                           │
+                           ▼
+                    Keyword Router
+                     /          \
+                    /            \
+                   ▼              ▼
+          Pandas Analytics     ChromaDB RAG
+          (Exact Math)       (Semantic Search)
+                   \              /
+                    \            /
+                     ▼          ▼
+                      OpenAI LLM
+                           │
+                           ▼
+                        Response
+```
+
 
 ## ⚙️ Setup and Installation
 
@@ -84,6 +106,58 @@ Start the interactive hybrid assistant by running:
 python src/chatbot.py
 
 ```
+
+## 🎯 Challenges Solved
+
+### Challenge 1: Duplicate Retrievals
+
+Initial implementation stored one visit as one document, causing multiple retrievals of the same patient.
+
+**Solution:**
+Converted the dataset into patient-level summaries.
+
+### Challenge 2: Incorrect Financial Calculations
+
+Pure RAG struggled with aggregation questions such as:
+
+* Total Revenue
+* Total Outstanding Amount
+* Highest Outstanding Balance
+
+**Solution:**
+Introduced a custom router that delegates mathematical operations to Pandas while preserving RAG for semantic search.
+
+### Challenge 3: Hallucinations
+
+LLMs occasionally attempted to infer information not present in the dataset.
+
+**Solution:**
+Implemented strict prompt guardrails requiring answers to be grounded in retrieved context.
+
+
+## 💬 Example Conversation
+
+**User:**
+What is the payment status of ChanduBhai?
+
+**Assistant:**
+The payment status of ChanduBhai is Pending Payment.
+
+---
+
+**User:**
+Who has the highest outstanding amount?
+
+**Assistant:**
+The patient with the highest outstanding amount is ChanduBhai with ₹6,800.
+
+---
+
+**User:**
+What condition does Monikaben have?
+
+**Assistant:**
+Monikaben has Paresis, categorized as a Neurological condition.
 
 ### Example Prompts to Try:
 

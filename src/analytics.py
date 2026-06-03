@@ -183,6 +183,194 @@ def get_least_daily_charge_patient():
     patients_str = " and ".join(bottom_patients)
     return f"The lowest per-day charge is ₹{min_charge:,.0f}, paid by: {patients_str}."
 
+def get_patient_holidays(query):
+    df = pd.read_excel(DATA_PATH)
+    
+    # 1. Grab a list of all patient names
+    patients = df["Patient_Name"].dropna().unique()
+    
+    # 2. Search the user's question for the patient's name
+    target_patient = None
+    for patient in patients:
+        if str(patient).lower() in query.lower():
+            target_patient = patient
+            break
+            
+    if not target_patient:
+        return "I couldn't identify the patient's name in your question. Please include their exact name!"
+        
+    # 3. Filter for that specific patient
+    patient_df = df[df["Patient_Name"] == target_patient]
+    
+    # 4. Filter for holidays/cancellations in the Remarks column
+    # We check for both spelling variations just to be safe!
+    holiday_mask = patient_df["Remarks"].isin(["Cancelled By Therapist", "Cancelled by Patient", "cancelled by therapist", "Cancelled By Patient","Cancelled by Therapist"])
+    holidays_df = patient_df[holiday_mask]
+    
+    total_holidays = len(holidays_df)
+    
+    if total_holidays == 0:
+        return f"Great news! No holidays or cancellations have been recorded for {target_patient}."
+        
+    # 5. Extract the dates and the specific reason
+    holiday_lines = []
+    for _, row in holidays_df.iterrows():
+        date_str = str(row["Date"]).split()[0]
+        reason = row["Remarks"]
+        holiday_lines.append(f"- {date_str}: {reason}")
+        
+    holidays_list_str = "\n".join(holiday_lines)
+    
+    return f"{target_patient} has had a total of {total_holidays} holidays/cancellations:\n{holidays_list_str}"
+
+
+    
+
+
+
+def get_sundays_passed_since_start(query):
+
+    df = pd.read_excel(DATA_PATH)
+
+    
+
+    # 1. Grab a list of all patient names
+
+    patients = df["Patient_Name"].dropna().unique()
+
+    
+
+    # 2. Search the user's question for the patient's name
+
+    target_patient = None
+
+    for patient in patients:
+
+        if str(patient).lower() in query.lower():
+
+            target_patient = patient
+
+            break
+
+            
+
+    if not target_patient:
+
+        return "I couldn't identify the patient's name in your question. Please include their exact name!"
+
+        
+
+    # 3. Filter for that specific patient
+
+    patient_df = df[df["Patient_Name"] == target_patient]
+
+    
+
+    if patient_df.empty:
+
+        return f"No records found for {target_patient}."
+
+        
+
+    # 4. Get their exact Exercise Start Date (assuming it's in the 'Exercise Start Date' column)
+
+    # We take the first available start date for them
+
+    start_date_val = patient_df["Exercise Start Date"].dropna().iloc[0]
+
+    start_date = pd.to_datetime(start_date_val)
+
+    today = pd.Timestamp.today()
+
+    
+
+    # 5. Generate a calendar range and count the Sundays (Sunday is day 6 in Pandas: Monday=0, Sunday=6)
+
+    days_between = pd.date_range(start=start_date, end=today)
+
+    sundays_passed = (days_between.dayofweek == 6).sum()
+
+    
+
+    clean_date = start_date.strftime('%Y-%m-%d')
+
+    return f"A total of {sundays_passed} Sunday(s) have passed since {target_patient} started their exercise on {clean_date}."
+
+
+
+
+
+def get_sunday_visits():
+
+    df = pd.read_excel(DATA_PATH)
+
+    
+
+    # 1. Filter rows where the Remarks column contains "Sunday visit conducted"
+
+    # We use na=False to prevent errors on empty remark cells, and case=False to catch spelling variations
+
+    sunday_visits_df = df[df["Remarks"].astype(str).str.contains("Sunday visit conducted", case=False, na=False)]
+
+    
+
+    if sunday_visits_df.empty:
+
+        return "No Sunday visits have been recorded for any patient yet."
+
+        
+
+    # 2. Count the unique patients
+
+    unique_patients_count = sunday_visits_df["Patient_Name"].nunique()
+
+    
+
+    # 3. Build the detailed output
+
+    result = f"A total of {unique_patients_count} patient(s) had visits conducted on a Sunday.\nHere are the details:\n"
+
+    
+
+    # Group by patient to list their specific Sunday dates
+
+    grouped = sunday_visits_df.groupby("Patient_Name")
+
+    for patient_name, group in grouped:
+
+        # Extract just the YYYY-MM-DD from the dates
+
+        dates = [str(d).split()[0] for d in group["Date"].tolist()]
+
+        result += f"- {patient_name}: {len(dates)} Sunday visit(s) on {', '.join(dates)}\n"
+
+        
+
+    return result.strip()
+
+
+def get_village_with_most_patients():
+    df = pd.read_excel(DATA_PATH)
+    
+    # Group by village and count UNIQUE patients
+    village_counts = df.groupby("Village")["Patient_ID"].nunique()
+    
+    if village_counts.empty:
+        return "No patient data available."
+        
+    # Find the absolute highest number of patients
+    max_patients = village_counts.max()
+    
+    # Find all villages that share this exact maximum number (handles ties perfectly!)
+    top_villages = village_counts[village_counts == max_patients].index.tolist()
+    
+    # Format the output cleanly depending on if there is a tie
+    if len(top_villages) == 1:
+        return f"The village with the most patients is {top_villages[0]}, which has {max_patients} patient(s)."
+    else:
+        villages_str = " and ".join(top_villages)
+        return f"There is a tie! The villages with the most patients are {villages_str}, each having {max_patients} patient(s)."
+
 # Quick test block
 if __name__ == "__main__":
     print(get_total_revenue())

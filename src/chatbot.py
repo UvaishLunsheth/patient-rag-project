@@ -21,7 +21,11 @@ from analytics import (
     get_average_revenue_per_patient,
     get_patient_daily_charges,
     get_highest_daily_charge_patient,
-    get_least_daily_charge_patient
+    get_least_daily_charge_patient,
+    get_patient_holidays,
+    get_sundays_passed_since_start, 
+    get_sunday_visits,
+    get_village_with_most_patients
 )
 
 # -----------------------------
@@ -101,7 +105,8 @@ while True:
         print("\n[System: Routed to Pandas Analytics]")
         print("Answer:\n" + get_total_patients())    
 
-    elif "total outstanding" in query_lower or "total amount yet to be paid" in query_lower:
+    # Route for Total Outstanding / Pending Payments
+    elif any(phrase in query_lower for phrase in ["total outstanding", "amount yet to be paid", "outstanding amount across all", "total pending payment"]):
         print("\n[System: Routed to Pandas Analytics]")
         print("Answer:\n" + get_total_outstanding())
 
@@ -145,6 +150,27 @@ while True:
     elif "per day charge" in query_lower or "daily charge" in query_lower or "charge of all patients" in query_lower:
         print("\n[System: Routed to Pandas Analytics]")
         print("Answer:\n" + get_patient_daily_charges())
+
+    # Route for tracking a patient's holidays / cancellations
+    elif any(phrase in query_lower for phrase in ["holiday", "holidays", "cancelled", "cancellation", "missed days"]):
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_patient_holidays(query))   
+
+
+    # Route for counting passed Sundays since a patient started
+    elif "how many sundays" in query_lower and "passed" in query_lower:
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_sundays_passed_since_start(query))
+        
+    # Route for tracking Sunday visits (who, when, and how many patients)
+    elif any(phrase in query_lower for phrase in ["sunday visit", "visit happened on sunday", "visits conducted on sunday"]):
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_sunday_visits())     
+    
+    # Route for finding the village with the most patients
+    elif any(phrase in query_lower for phrase in ["village with most patients", "village has the most patients", "most patients from which village", "most patients in a village"]):
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_village_with_most_patients())
 
     # Route 2: RAG (Semantic Search / Text)
     else:
