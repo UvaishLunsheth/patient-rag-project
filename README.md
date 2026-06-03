@@ -106,8 +106,3 @@ python src/chatbot.py
 
 ```
 
-***
-
-
-
-```
