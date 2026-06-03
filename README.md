@@ -47,8 +47,8 @@ patient-rag-project/
 **1. Clone the repository:**
 
 ```bash
-git clone [https://github.com/yourusername/physio-hybrid-assistant.git](https://github.com/yourusername/physio-hybrid-assistant.git)
-cd physio-hybrid-assistant
+git clone [https://github.com/yourusername/physio-hybrid-assistant.git](https://github.com/UvaishLunsheth/patient-rag-project.git)
+cd patient-rag-project
 
 ```
 
