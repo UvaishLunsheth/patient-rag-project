@@ -19,7 +19,9 @@ from analytics import (
     get_days_since_patient_payment,
     get_village_wise_revenue,        
     get_average_revenue_per_patient,
-    get_patient_daily_charges
+    get_patient_daily_charges,
+    get_highest_daily_charge_patient,
+    get_least_daily_charge_patient
 )
 
 # -----------------------------
@@ -129,11 +131,21 @@ while True:
         print("\n[System: Routed to Pandas Analytics]")
         print("Answer:\n" + get_average_revenue_per_patient())
 
-    # Route for Per Day Charges
+    #  Route for HIGHEST Per Day Charge (Must go first!)
+    elif any(phrase in query_lower for phrase in ["highest per day charge", "most per day charge", "highest daily charge"]):
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_highest_daily_charge_patient())
+
+    #  Route for LOWEST Per Day Charge
+    elif any(phrase in query_lower for phrase in ["least per day charge", "lowest per day charge", "least daily charge"]):
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_least_daily_charge_patient())
+
+    #  Route for General Per Day Charges (List everyone)
     elif "per day charge" in query_lower or "daily charge" in query_lower or "charge of all patients" in query_lower:
         print("\n[System: Routed to Pandas Analytics]")
         print("Answer:\n" + get_patient_daily_charges())
-        
+
     # Route 2: RAG (Semantic Search / Text)
     else:
         print("\n[System: Routed to ChromaDB RAG]")

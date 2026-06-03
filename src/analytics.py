@@ -131,6 +131,58 @@ def get_patient_daily_charges():
             
     return result.strip()
 
+def get_highest_daily_charge_patient():
+    df = pd.read_excel(DATA_PATH)
+    
+    patient_charges = {}
+    grouped = df.groupby("Patient_Name")
+    
+    # Calculate everyone's daily charge
+    for name, group in grouped:
+        total_revenue = group["True_Revenue"].sum()
+        total_visits = group[group["Visit_Status"] == "Visit"].shape[0]
+        
+        if total_visits > 0:
+            patient_charges[name] = total_revenue / total_visits
+            
+    if not patient_charges:
+        return "No visits have been recorded yet."
+        
+    # Find the maximum charge
+    max_charge = max(patient_charges.values())
+    
+    # Find all patients who pay this max amount (handles ties)
+    top_patients = [name for name, charge in patient_charges.items() if charge == max_charge]
+    
+    patients_str = " and ".join(top_patients)
+    return f"The highest per-day charge is ₹{max_charge:,.0f}, paid by: {patients_str}."
+
+def get_least_daily_charge_patient():
+    df = pd.read_excel(DATA_PATH)
+    
+    patient_charges = {}
+    grouped = df.groupby("Patient_Name")
+    
+    # Calculate everyone's daily charge
+    for name, group in grouped:
+        total_revenue = group["True_Revenue"].sum()
+        total_visits = group[group["Visit_Status"] == "Visit"].shape[0]
+        
+        if total_visits > 0:
+            patient_charges[name] = total_revenue / total_visits
+            
+    if not patient_charges:
+        return "No visits have been recorded yet."
+        
+    # Find the MINIMUM charge instead of maximum
+    min_charge = min(patient_charges.values())
+    
+    # Find all patients who pay this minimum amount (handles ties)
+    bottom_patients = [name for name, charge in patient_charges.items() if charge == min_charge]
+    
+    patients_str = " and ".join(bottom_patients)
+    return f"The lowest per-day charge is ₹{min_charge:,.0f}, paid by: {patients_str}."
+
 # Quick test block
 if __name__ == "__main__":
     print(get_total_revenue())
@@ -138,3 +190,8 @@ if __name__ == "__main__":
     print(get_highest_outstanding_patient())
     print(get_total_patients())
     print(get_latest_payment())
+    print(get_village_wise_revenue())
+    print(get_average_revenue_per_patient())
+    print(get_patient_daily_charges())
+    print(get_highest_daily_charge_patient())
+    print(get_least_daily_charge_patient())
