@@ -1,10 +1,4 @@
-This is a huge milestone! You have officially built a fully functional, production-style Hybrid AI architecture.
 
-A great `README.md` is essential for making your GitHub repository stand out to potential recruiters. It needs to clearly explain what the project is, why you built it, and how the hybrid architecture solves the classic "RAG blindspot."
-
-Here is a professional, highly detailed `README.md` template perfectly tailored to your project. You can copy and paste this directly into your GitHub repository!
-
----
 
 ```markdown
 # Physiotherapy Hybrid AI Assistant (RAG + Analytics)
