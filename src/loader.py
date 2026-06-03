@@ -1,26 +1,34 @@
 import pandas as pd
 
-# File path
-file_path = "data/Visit_Charges_data.xlsx"
 
-# Read Excel
-df = pd.read_excel(file_path)
+def load_data(file_path: str):
+    """
+    Load Excel dataset and perform basic validation.
+    """
 
-# Display first 5 rows
-print(df.head())
+    df = pd.read_excel(file_path)
 
-# Dataset information
-print("\nShape:")
-print(df.shape)
+    print("\nDataset Loaded Successfully!")
 
-print("\nColumns:")
-print(df.columns.tolist())
+    print("\nShape:")
+    print(df.shape)
 
-print("\nNull values:")
-print(df.isnull().sum().sum())
+    print("\nColumns:")
+    print(df.columns.tolist())
 
-duplicate_rows = df.duplicated().sum()
-print(f"\nDuplicate rows: {duplicate_rows}")
+    print("\nNull Values:")
+    print(df.isnull().sum().sum())
 
-print("\nDataset Info:")
-df.info()
+    print("\nDuplicate Rows:")
+    print(df.duplicated().sum())
+
+    return df
+
+
+if __name__ == "__main__":
+
+    df = load_data("data/Visit_Charges_data.xlsx")
+
+    print("\nDataset Info:")
+    print(df.info())
+
