@@ -219,3 +219,11 @@ __marimo__/
 
 .vscode/
 *.env
+
+# ========================
+# RAG & Vector DB Specific
+# ========================
+chroma_db/
+chroma_db_v2/
+faiss_index/
+*.sqlite3
