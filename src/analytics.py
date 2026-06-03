@@ -87,8 +87,49 @@ def get_days_since_patient_payment(query):
     
     days_passed = (today - latest_date).days
     clean_date = latest_date.strftime('%Y-%m-%d')
-    
+
     return f"It has been {days_passed} days since {target_patient}'s last payment, which was made on {clean_date}."
+
+def get_village_wise_revenue():
+    df = pd.read_excel(DATA_PATH)
+    # Group by Village and sum the revenue
+    village_rev = df.groupby("Village")["True_Revenue"].sum().reset_index()
+    
+    # Sort from highest revenue to lowest
+    village_rev = village_rev.sort_values("True_Revenue", ascending=False)
+    
+    result = "Here is the revenue breakdown by village:\n"
+    for _, row in village_rev.iterrows():
+        result += f"- {row['Village']}: ₹{row['True_Revenue']:,.0f}\n"
+    return result.strip()
+
+def get_average_revenue_per_patient():
+    df = pd.read_excel(DATA_PATH)
+    total_rev = df["True_Revenue"].sum()
+    total_patients = df["Patient_ID"].nunique()
+    
+    avg_rev = total_rev / total_patients if total_patients > 0 else 0
+    return f"The average revenue generated per patient is ₹{avg_rev:,.0f}."
+
+def get_patient_daily_charges():
+    df = pd.read_excel(DATA_PATH)
+    
+    # Group by patient and calculate their per-visit charge
+    result = "Here is the effective per-day charge for each patient:\n"
+    
+    grouped = df.groupby("Patient_Name")
+    for name, group in grouped:
+        total_revenue = group["True_Revenue"].sum()
+        total_visits = group[group["Visit_Status"] == "Visit"].shape[0]
+        
+        # Avoid division by zero if a patient hasn't had any visits yet
+        if total_visits > 0:
+            daily_charge = total_revenue / total_visits
+            result += f"- {name}: ₹{daily_charge:,.0f} per day\n"
+        else:
+            result += f"- {name}: No visits recorded yet\n"
+            
+    return result.strip()
 
 # Quick test block
 if __name__ == "__main__":

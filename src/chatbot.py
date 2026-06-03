@@ -16,7 +16,10 @@ from analytics import (
     get_total_outstanding, 
     get_highest_outstanding_patient,
     get_latest_payment,
-    get_days_since_patient_payment
+    get_days_since_patient_payment,
+    get_village_wise_revenue,        
+    get_average_revenue_per_patient,
+    get_patient_daily_charges
 )
 
 # -----------------------------
@@ -115,7 +118,22 @@ while True:
         # We pass the query into the function so it can find the name!
         print("Answer:\n" + get_days_since_patient_payment(query))    
     # --------------------------
+    
+    # Route for Village-wise Revenue
+    elif any(phrase in query_lower for phrase in ["village wise", "revenue by village", "village revenue"]):
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_village_wise_revenue())
 
+    # Route for Average Revenue Per Patient
+    elif "average revenue" in query_lower or "revenue per patient" in query_lower:
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_average_revenue_per_patient())
+
+    # Route for Per Day Charges
+    elif "per day charge" in query_lower or "daily charge" in query_lower or "charge of all patients" in query_lower:
+        print("\n[System: Routed to Pandas Analytics]")
+        print("Answer:\n" + get_patient_daily_charges())
+        
     # Route 2: RAG (Semantic Search / Text)
     else:
         print("\n[System: Routed to ChromaDB RAG]")
